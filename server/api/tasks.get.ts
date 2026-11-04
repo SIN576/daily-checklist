@@ -1,5 +1,6 @@
-import { readFile } from 'node:fs/promises'
+import seed from '../../data/tasks.json'
 
+// Fall back to the bundled file until the first save (empty Redis on Vercel)
 export default defineEventHandler(async () =>
-  JSON.parse(await readFile('data/tasks.json', 'utf8')),
+  (await useStorage('data').getItem('tasks.json')) ?? seed,
 )

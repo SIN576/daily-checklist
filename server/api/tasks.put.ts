@@ -1,6 +1,4 @@
-import { writeFile } from 'node:fs/promises'
-
-// Client sends the whole list; we validate and overwrite the file.
+// Client sends the whole list; we validate and overwrite the stored list.
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const ok = Array.isArray(body) && body.every(t =>
@@ -9,6 +7,6 @@ export default defineEventHandler(async (event) => {
   if (!ok) throw createError({ statusCode: 400, statusMessage: 'Invalid task list' })
 
   const tasks = body.map(({ id, section, group, text, done }) => ({ id, section, group, text: text.trim(), done }))
-  await writeFile('data/tasks.json', JSON.stringify(tasks, null, 2) + '\n')
+  await useStorage('data').setItem('tasks.json', JSON.stringify(tasks, null, 2) + '\n')
   return tasks
 })
