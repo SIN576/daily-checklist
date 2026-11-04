@@ -1,11 +1,30 @@
 <script setup lang="ts">
+import seed from '../data/tasks.json'
+
 type Task = { id: number, section: string, group: string, text: string, done: boolean }
 
 useHead({ title: 'Daily Checklist' })
 
-const { data: tasks } = await useFetch<Task[]>('/api/tasks', { default: () => [] })
+// Tasks live in this browser's localStorage; data/tasks.json is the starting list
+const KEY = 'daily-checklist'
 
-// section -> group -> tasks, in the order they first appear in the file
+function load(): Task[] {
+  try {
+    const saved = localStorage.getItem(KEY)
+    if (saved) return JSON.parse(saved)
+  }
+  catch {}
+  return structuredClone(seed)
+}
+
+const tasks = ref<Task[]>(load())
+
+watch(tasks, () => {
+  try { localStorage.setItem(KEY, JSON.stringify(tasks.value)) }
+  catch {}
+}, { deep: true })
+
+// section -> group -> tasks, in the order they first appear in the list
 const sections = computed(() => {
   const map = new Map<string, Map<string, Task[]>>()
   for (const t of tasks.value) {
@@ -19,32 +38,26 @@ const sections = computed(() => {
 
 const doneCount = computed(() => tasks.value.filter(t => t.done).length)
 
-async function save() {
-  tasks.value = await $fetch<Task[]>('/api/tasks', { method: 'PUT', body: tasks.value })
-}
-
 function add(section: string, group: string, e: Event) {
   const input = e.target as HTMLInputElement
   const text = input.value.trim()
   if (!text) return
   tasks.value.push({ id: Date.now(), section, group, text, done: false })
   input.value = ''
-  save()
 }
 
 function remove(id: number) {
   tasks.value = tasks.value.filter(t => t.id !== id)
-  save()
 }
 
 // Clearing a task's text deletes it
 function edit(t: Task) {
-  t.text.trim() ? save() : remove(t.id)
+  t.text = t.text.trim()
+  if (!t.text) remove(t.id)
 }
 
 function reset() {
   tasks.value.forEach(t => (t.done = false))
-  save()
 }
 </script>
 
@@ -65,7 +78,7 @@ function reset() {
         <h3>{{ group }}</h3>
         <ul>
           <li v-for="t in items" :key="t.id">
-            <input v-model="t.done" type="checkbox" :aria-label="`Done: ${t.text}`" @change="save">
+            <input v-model="t.done" type="checkbox" :aria-label="`Done: ${t.text}`">
             <input v-model="t.text" class="text" :class="{ done: t.done }" aria-label="Task" @change="edit(t)">
             <button class="del" aria-label="Delete task" @click="remove(t.id)">✕</button>
           </li>
