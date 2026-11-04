@@ -1,0 +1,12 @@
+[
+  { "id": 1, "section": "🌅 Morning", "group": "Start of day", "text": "Review today's priorities", "done": false },
+  { "id": 2, "section": "🌅 Morning", "group": "Start of day", "text": "Check ETL/job status and resolve errors", "done": false },
+  { "id": 3, "section": "🌅 Morning", "group": "Start of day", "text": "Check messages from coworkers and support teams", "done": false },
+  { "id": 4, "section": "🌅 Morning", "group": "Focus time", "text": "Choose the primary task and protect focus time", "done": false },
+  { "id": 5, "section": "🌅 Morning", "group": "Focus time", "text": "Work on the highest-priority task", "done": false },
+  { "id": 6, "section": "🌅 Morning", "group": "Focus time", "text": "Note anything to continue after lunch", "done": false },
+  { "id": 7, "section": "🌤️ Afternoon", "group": "Start of afternoon", "text": "Check ETL/job status again", "done": false },
+  { "id": 8, "section": "🌤️ Afternoon", "group": "Start of afternoon", "text": "Pick up notes from the morning", "done": false },
+  { "id": 9, "section": "🌙 End of day", "group": "Wrap up", "text": "Update task status", "done": false },
+  { "id": 10, "section": "🌙 End of day", "group": "Wrap up", "text": "Plan tomorrow's priorities", "done": false }
+]
